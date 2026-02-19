@@ -24,19 +24,70 @@
     }
 
     .cell {
-      background: #444;
+      position: relative;
       border-radius: 8px;
       cursor: pointer;
-      transition: 0.2s;
+      overflow: hidden;
+      font-family: sans-serif;
+      transition: 0.3s ease;
+      box-sizing: border-box;
     }
 
-    .cell:hover {
-      background: #666;
+    /* Much darker overlay for inactive cells */
+    .cell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      transition: 0.3s ease;
+      z-index: 1;
     }
 
-    .highlight {
-      background: #00ff88 !important;
+    /* Active cell = remove dark overlay + white outline */
+    .cell.active::after {
+      background: rgba(0, 0, 0, 0);
     }
+
+    .cell.active {
+      outline: 5px solid white;
+      outline-offset: -5px;
+    }
+
+    /* Top number */
+    .top-number {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      z-index: 2;
+      text-shadow: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000;
+    }
+
+    /* Title */
+    .song-title {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      font-size: 25px;
+      font-weight: bold;
+      color: #bbbbbb; /* grey by default */
+      z-index: 2;
+      transition: 0.3s ease;
+      text-shadow: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000;
+    }
+
+    /* Active title becomes white */
+    .cell.active .song-title {
+      color: white;
+    }
+
+
   </style>
 </head>
 <body>
@@ -44,7 +95,6 @@
 <div id="grid"></div>
 
 <script type="module">
-  // Import Firebase (v10 modular)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { 
     getDatabase, 
@@ -53,30 +103,57 @@
     onValue 
   } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
+  const SHOW_TITLES = true;
 
-  // 🔴 REPLACE WITH YOUR FIREBASE CONFIG
+  const songs = [
+    "Les Ancêtres", "Adam's Step", "Yaman Yar", "Pinson's Place",
+    "Chorinho for Tati", "New Paths", "Um Choro Felis", "Check Mate",
+    "Hurricane Siesta", "Hopeful Hero", "Zikhrono Livrakha", "Aaron's Mirror",
+    "House on a Hill", "Perdrille", "--", "--"
+  ];
+
+  const colors = [
+    "#FF6B6B", "#6BCB77", "#4D96FF", "#FFD93D",
+    "#FF9F1C", "#9D4EDD", "#00C2A8", "#F15BB5",
+    "#00BBF9", "#FEE440", "#EF476F", "#06D6A0",
+    "#118AB2", "#8338EC", "#FF006E", "#3A86FF"
+  ];
+
   const firebaseConfig = {
-    apiKey: "AIzaSyB_udqJzoNoLzVS_Q1bLJFHIxhfG4R0OJ8",
+    apiKey: "YOUR_KEY",
     authDomain: "selector-38b9e.firebaseapp.com",
+    databaseURL: "https://selector-38b9e-default-rtdb.firebaseio.com",
     projectId: "selector-38b9e",
     storageBucket: "selector-38b9e.firebasestorage.app",
     messagingSenderId: "81446126450",
-    appId: "1:81446126450:web:9eff6a2e76f763296cd3eb",
-    databaseURL: "https://selector-38b9e-default-rtdb.firebaseio.com"
-
+    appId: "1:81446126450:web:9eff6a2e76f763296cd3eb"
   };
-
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
   const grid = document.getElementById("grid");
 
-  // Create 16 cells
   for (let i = 0; i < 16; i++) {
     const cell = document.createElement("div");
     cell.classList.add("cell");
     cell.dataset.index = i;
+    cell.style.background = colors[i];
+
+    const topNumber = document.createElement("div");
+    topNumber.classList.add("top-number");
+    topNumber.textContent = i + 1;
+
+    const title = document.createElement("div");
+    title.classList.add("song-title");
+    title.textContent = songs[i];
+
+    if (!SHOW_TITLES) {
+      title.style.display = "none";
+    }
+
+    cell.appendChild(topNumber);
+    cell.appendChild(title);
 
     cell.addEventListener("click", () => {
       set(ref(db, "highlightedCell"), i);
@@ -85,20 +162,23 @@
     grid.appendChild(cell);
   }
 
-  // Listen for changes in real-time
   onValue(ref(db, "highlightedCell"), (snapshot) => {
     const selected = snapshot.val();
 
     document.querySelectorAll(".cell").forEach(cell => {
-      cell.classList.remove("highlight");
+      cell.classList.remove("active");
     });
 
     if (selected !== null) {
       const active = document.querySelector(`.cell[data-index='${selected}']`);
-      if (active) active.classList.add("highlight");
+      if (active) {
+        active.classList.add("active");
+      }
     }
   });
 </script>
+
+
 
 </body>
 </html>
