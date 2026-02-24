@@ -106,17 +106,41 @@
   const SHOW_TITLES = true;
 
   const songs = [
-    "Les Ancêtres", "Adam's Step", "Yaman Yar", "Pinson's Place",
-    "Chorinho for Tati", "New Paths", "Um Choro Felis", "Check Mate",
-    "Hurricane Siesta", "Hopeful Hero", "Zikhrono Livrakha", "Aaron's Mirror",
-    "House on a Hill", "Perdrille", "--", "--"
+    "Aaron’s Mirror",
+    "Adam’s Step",
+    "Check Mate",
+    "Chorinho for Tati",
+    "Gohar",
+    "Hopeful Hero",
+    "House on a Hill",
+    "Hurricane Siesta",
+    "Les Ancêtres",
+    "New Paths",
+    "Perdrille",
+    "Pinson’s Place",
+    "Um Choro Feliz",
+    "Yaman Yar",
+    "Zikhrono Livrakha",
+    "IMPROV"
   ];
 
   const colors = [
-    "#FF6B6B", "#6BCB77", "#4D96FF", "#FFD93D",
-    "#FF9F1C", "#9D4EDD", "#00C2A8", "#F15BB5",
-    "#00BBF9", "#FEE440", "#EF476F", "#06D6A0",
-    "#118AB2", "#8338EC", "#FF006E", "#3A86FF"
+    "#8B0000",  // Aaron’s Mirror – Deep red
+    "#1B5E20",  // Adam’s Step – Darker green
+    "#C1121F",  // Check Mate – Red
+    "#0B6623",  // Chorinho for Tati – Dark green
+    "#C8A2C8",  // Gohar – Lavender
+    "#C9A227",  // Hopeful Hero – Dark yellow
+    "#90EE90",  // House on a Hill – Light green
+    "#00FFFF",  // Hurricane Siesta – Cyan
+    "#CC5500",  // Les Ancêtres – Deep orange
+    "#1565C0",  // New Paths – Blue
+    "#FF6F91",  // Perdrille – Pinkish
+    "#FFD60A",  // Pinson’s Place – Yellow
+    "#FFB703",  // Um Choro Feliz – Bright yellow/orange
+    "#4B0082",  // Yaman Yar – Deep purple
+    "#800080",  // Zikhrono Livrakha – Purple
+    "#000000"   //IMPROV
   ];
 
   const firebaseConfig = {
@@ -163,7 +187,7 @@
   }
 
   onValue(ref(db, "highlightedCell"), (snapshot) => {
-    const selected = snapshot.val();
+    const selected = snapshot.val();  
 
     document.querySelectorAll(".cell").forEach(cell => {
       cell.classList.remove("active");
